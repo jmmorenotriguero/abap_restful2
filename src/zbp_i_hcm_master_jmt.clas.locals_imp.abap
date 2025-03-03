@@ -64,9 +64,92 @@ CLASS lhc_HCMMaster IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD update.
+
+  GET TIME STAMP FIELD DATA(lv_time_stamp).
+DATA(lv_uname) = cl_abap_context_info=>get_user_technical_name( ).
+LOOP AT entities INTO DATA(ls_entities).
+SELECT SINGLE * FROM zhc_master_jmt
+WHERE e_number EQ @ls_entities-%data-e_number
+INTO @DATA(ls_ddbb).
+ls_entities-%data-lchg_date_time = lv_time_stamp.
+ls_entities-%data-lchg_uname = lv_uname.
+INSERT VALUE #( flag = lcl_buffer=>updated
+data = VALUE #( e_number = ls_entities-%data-e_number
+e_name = COND #(
+WHEN ls_entities-%control-e_name EQ if_abap_behv=>mk-on
+THEN ls_entities-%data-e_name
+ELSE ls_ddbb-e_name )
+e_department = COND #(
+WHEN ls_entities-%control-e_department EQ if_abap_behv=>mk-on
+THEN ls_entities-%data-e_department
+ELSE ls_ddbb-e_department )
+status = COND #(
+WHEN ls_entities-%control-status EQ if_abap_behv=>mk-on
+THEN ls_entities-%data-status
+ELSE ls_ddbb-status )
+job_title = COND #(
+WHEN ls_entities-%control-job_title EQ if_abap_behv=>mk-on
+THEN ls_entities-%data-job_title
+ELSE ls_ddbb-job_title )
+start_date = COND #(
+WHEN ls_entities-%control-start_date EQ if_abap_behv=>mk-on
+THEN ls_entities-%data-start_date
+ELSE ls_ddbb-start_date )
+end_date = COND #( WHEN
+ls_entities-%control-end_date EQ if_abap_behv=>mk-on
+THEN
+ls_entities-%data-end_date
+ELSE
+ls_ddbb-end_date )
+email = COND #( WHEN
+ls_entities-%control-email EQ if_abap_behv=>mk-on
+THEN
+ls_entities-%data-email
+ELSE
+ls_ddbb-email )
+m_number = COND #( WHEN
+ls_entities-%control-m_number EQ if_abap_behv=>mk-on
+THEN
+ls_entities-%data-m_number
+ELSE
+ls_ddbb-m_number )
+m_name = COND #( WHEN
+ls_entities-%control-m_name EQ if_abap_behv=>mk-on
+THEN
+ls_entities-%data-m_name
+ELSE
+ls_ddbb-m_name )
+m_department = COND #(
+WHEN ls_entities-%control-m_department EQ if_abap_behv=>mk-on
+THEN
+ls_entities-%data-m_department
+ELSE
+ls_ddbb-m_department )
+crea_date_time = ls_ddbb-crea_date_time
+crea_uname = ls_ddbb-crea_uname
+) ) INTO TABLE
+lcl_buffer=>mt_buffer_master.
+IF NOT ls_entities-e_number IS INITIAL.
+INSERT VALUE #( %cid = ls_entities-%data-e_number
+e_number = ls_entities-%data-e_number
+) INTO TABLE mapped-hcmmaster.
+ENDIF.
+ENDLOOP.
+
   ENDMETHOD.
 
   METHOD delete.
+
+  LOOP AT keys INTO DATA(ls_keys).
+  INSERT VALUE #( flag = lcl_buffer=>deleted
+data = VALUE #( e_number = ls_keys-%key-e_number ) ) INTO TABLE lcl_buffer=>mt_buffer_master.
+IF NOT ls_keys-e_number IS INITIAL.
+INSERT VALUE #( %cid = ls_keys-%key-e_number
+e_number = ls_keys-%key-e_number )
+INTO TABLE mapped-hcmmaster.
+ENDIF.
+ENDLOOP.
+
   ENDMETHOD.
 
   METHOD read.

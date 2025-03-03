@@ -10,13 +10,13 @@ FUNCTION z_suppl_jmt.
   CHECK NOT it_supplements IS INITIAL.
   CASE iv_op_type.
     WHEN 'C'.
-      INSERT zbooksuppl_log FROM TABLE
+      INSERT ztb_booksupp_jmt FROM TABLE
       @it_supplements.
     WHEN 'U'.
-      UPDATE zbooksuppl_log FROM TABLE
+      UPDATE ztb_booksupp_jmt FROM TABLE
       @it_supplements.
     WHEN 'D'.
-      DELETE zbooksuppl_log FROM TABLE
+      DELETE ztb_booksupp_jmt FROM TABLE
       @it_supplements.
   ENDCASE.
   IF sy-subrc EQ 0.

@@ -7,7 +7,7 @@
     title: {
         type: #STANDARD,
         value: 'TravelID'
-    }
+    } 
     }
 }
 annotate view Z_C_TRAVEL_JMT with

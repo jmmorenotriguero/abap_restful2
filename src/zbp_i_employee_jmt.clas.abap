@@ -1,0 +1,5 @@
+CLASS zbp_i_employee_jmt DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF z_i_employee_jmt.
+ENDCLASS.
+
+CLASS zbp_i_employee_jmt IMPLEMENTATION.
+ENDCLASS.
